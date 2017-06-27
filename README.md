@@ -20,7 +20,7 @@ Proof of Concept of Ansible integration with Intelliment Security Policy Automat
 
 + Edit intelliment.yml to define your network visibility needs, specifying source, destination, action and services. Source and destination could be defined as IP, name or tag inside Intelliment model.
 
-'''yaml
+'''python
 ---
 - hosts: localhost
   gather_facts: false
