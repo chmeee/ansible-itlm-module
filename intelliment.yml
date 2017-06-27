@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: Create visibility requirements on Intelliment
+      intelliment: 
+        scenario: 15
+        policies:
+          - source: "0.0.0.0/0"
+            destination: "eu-banking-app"
+            action: "allow"
+            services: "tcp/80"
+          - source: "i-034ee5dbfd85f6837"
+            destination: "0.0.0.0/0"
+            action: "allow"
+            services: "tcp/75"
+          - source: "0.0.0.0/0"
+            destination: "subnet-79972720"
+            action: "allow"
+            services: "tcp/60-100"
+          - source: "subnet-79972720"
+            destination: "0.0.0.0/0"
+            action: "allow"
+            services: "tcp/200-300"          
+          - source: "B_intranet"
+            destination: "backend-1"
+            action: "allow"
+            services: "tcp/443"
+      register: result
+
