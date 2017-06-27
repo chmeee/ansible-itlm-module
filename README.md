@@ -20,7 +20,7 @@ Proof of Concept of Ansible integration with Intelliment Security Policy Automat
 
 + Edit intelliment.yml to define your network visibility needs, specifying source, destination, action and services. Source and destination could be defined as IP, name or tag inside Intelliment model.
 
-'''python
+```yaml
 ---
 - hosts: localhost
   gather_facts: false
@@ -52,9 +52,9 @@ Proof of Concept of Ansible integration with Intelliment Security Policy Automat
             action: "allow"
             services: "tcp/443"
       register: result
-'''
+```
 
-+ Launch playbook: 'ansible-playbook intelliment.yml'
++ Launch playbook: `ansible-playbook intelliment.yml`
 
 ## Demo
 
