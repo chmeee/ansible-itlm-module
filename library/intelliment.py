@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-DOCUMENTATION = '''  
+DOCUMENTATION = '''
 ---
 module: ansible-itlm-module (intelliment)
 short_description: Create visibility requirements on Intelliment. Source and destination could be defined as IP, name or tags.
 '''
 
-EXAMPLES = '''  
+EXAMPLES = '''
 - name: Example of creation by IP, name and/or tags
-      intelliment: 
+      intelliment:
         scenario: 1
         policies:
           - source: "0.0.0.0/0"
@@ -18,7 +18,7 @@ EXAMPLES = '''
           - source: "10.0.2.0/24"
             destination: "10.21.30.0/24"
             action: "allow"
-            services: "tcp/90"            
+            services: "tcp/90"
           - source: "0.0.0.0/0"
             destination: "subnet-79972720"
             action: "allow"
@@ -28,7 +28,7 @@ EXAMPLES = '''
             action: "allow"
             services: "tcp/80"
       register: result
-'''  
+'''
 
 from ansible.module_utils.basic import *
 import csv
@@ -39,7 +39,7 @@ __author__ = "Ildefonso Montero Perez"
 __version__ = "0.0.1"
 
 request = "http://localhost:8080/api/v1/policy-automation/scenarios/"
-token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbW9udGVybyIsImp0aSI6ImEyZjMyNDRkLTNkYzUtNDBjMi1hNzQ1LWJlNzFiOWMyN2NiYSJ9.dChCGy74YyaGmfh7qgnzArDgGRKbqioZpQsI4zt6Ng4"
+token = <INTELLIMENT-API-TOKEN>
 headers = {"Accept" : "application/json", "content-type" : "application/json", "Authorization" : "Bearer " + token}
 
 """ 
