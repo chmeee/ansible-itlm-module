@@ -3,30 +3,95 @@
   gather_facts: false
   connection: local
 
-  tasks:
-    - name: Create visibility requirements on Intelliment
-      intelliment: 
-        scenario: 15
-        policies:
-          - source: "0.0.0.0/0"
-            destination: "eu-banking-app"
-            action: "allow"
-            services: "tcp/80"
-          - source: "i-034ee5dbfd85f6837"
-            destination: "0.0.0.0/0"
-            action: "allow"
-            services: "tcp/75"
-          - source: "0.0.0.0/0"
-            destination: "subnet-79972720"
-            action: "allow"
-            services: "tcp/60-100"
-          - source: "subnet-79972720"
-            destination: "0.0.0.0/0"
-            action: "allow"
-            services: "tcp/200-300"          
-          - source: "B_intranet"
-            destination: "backend-1"
-            action: "allow"
-            services: "tcp/443"
-      register: result
+  vars:
+    scenario: 2855
+    objects:
+      web_servers:
+        - app-ws
+        - app-ws2
+      all_servers:
+        - app-database
+        - app-ws
+        - app-ws2
+        - puppet-dns
+    services:
+      mysql: "tcp/3306"
+      https: "tcp/443"
+      ssh:   "tcp/22"
+      dns:   "udp/53"
 
+  tasks:
+    - name: HTTPS from Users to web_servers
+      intelliment: 
+        scenario: "{{ scenario }}"
+        policies:
+          - source: "Users"
+            destination: "{{ item }}"
+            action: "allow"
+            services: "{{ services.https }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:web"
+      register: result
+      with_items: "{{ objects.web_servers }}"
+      
+    - name: HTTPS from HQ_DMZ to web_servers
+      intelliment: 
+        scenario: "{{ scenario }}"
+        policies:
+          - source: "HQ_DMZ"
+            destination: "{{ item }}"
+            action: "allow"
+            services: "{{ services.https }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:web"
+      register: result
+      with_items: "{{ objects.web_servers }}"
+
+    - name: MySQL from web_servers to app-database
+      intelliment: 
+        scenario: "{{ scenario }}"
+        policies:
+          - source: "{{ item }}"
+            destination: "app-database"
+            action: "allow"
+            services: "{{ services.mysql }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:db"
+      register: result
+      with_items: "{{ objects.web_servers }}"
+
+    - name: DNS from all servers to puppet-dns
+      intelliment: 
+        scenario: "{{ scenario }}"
+        policies:
+          - source: "{{ item }}"
+            destination: "puppet-dns"
+            action: "allow"
+            services: "{{ services.dns }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:dns"
+      register: result
+      with_items: "{{ objects.all_servers }}"
+
+    - name: SSH from Admins to all servers
+      intelliment: 
+        scenario: "{{ scenario }}"
+        policies:
+          - source: "Admins"
+            destination: "{{ item }}"
+            action: "allow"
+            services: "{{ services.ssh }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:ssh"
+      register: result
+      with_items: "{{ objects.all_servers }}"
