@@ -4,7 +4,7 @@
   connection: local
 
   vars:
-    scenario: 64
+    scenario: 2855
     objects:
       web_servers:
         - app-ws
@@ -29,6 +29,10 @@
             destination: "{{ item }}"
             action: "allow"
             services: "{{ services.https }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:web"
       register: result
       with_items: "{{ objects.web_servers }}"
       
@@ -40,6 +44,10 @@
             destination: "{{ item }}"
             action: "allow"
             services: "{{ services.https }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:web"
       register: result
       with_items: "{{ objects.web_servers }}"
 
@@ -51,6 +59,10 @@
             destination: "app-database"
             action: "allow"
             services: "{{ services.mysql }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:db"
       register: result
       with_items: "{{ objects.web_servers }}"
 
@@ -62,6 +74,10 @@
             destination: "puppet-dns"
             action: "allow"
             services: "{{ services.dns }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:dns"
       register: result
       with_items: "{{ objects.all_servers }}"
 
@@ -73,5 +89,9 @@
             destination: "{{ item }}"
             action: "allow"
             services: "{{ services.ssh }}"
+            tags:
+              - "loc:london"
+              - "stage:prod"
+              - "func:ssh"
       register: result
       with_items: "{{ objects.all_servers }}"

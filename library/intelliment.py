@@ -61,7 +61,7 @@ def create_requirements(policies, scenario_id):
 				"type": "custom",
 				"services": resolve_services(policy)
 			}],
-			"tags" : ""
+			"tags" : policy["tags"] if "tags" in policy else []
 		}
 
 		policy_endpoints = resolve_endpoints(scenario_id, policy, internet)
@@ -69,8 +69,8 @@ def create_requirements(policies, scenario_id):
 		if is_aws_related(policy_endpoints):
 			create_aws_related_requirement(scenario_id, requirement, policy_endpoints)
 		else:
-			tag = policy_endpoints["source"] + "-" + policy_endpoints["destination"]
-			create_requirement(scenario_id, requirement, tag, policy_endpoints["source"], policy_endpoints["source_type"], policy_endpoints["destination"], policy_endpoints["destination_type"])
+			tags = ["ansible"]
+			create_requirement(scenario_id, requirement, tags, policy_endpoints["source"], policy_endpoints["source_type"], policy_endpoints["destination"], policy_endpoints["destination_type"])
 
 """ 
  Creates AWS related requirement solving its security group or network ACL related 
@@ -95,9 +95,9 @@ def create_aws_related_requirement(scenario_id, requirement, policy_endpoints):
 """ 
  Creates a requirement via Intelliment API 
 """
-def create_requirement(scenario_id, requirement, tag, source, source_type, destination, destination_type):
+def create_requirement(scenario_id, requirement, tags, source, source_type, destination, destination_type):
 	
-	requirement["tags"] = [tag]
+	requirement["tags"] += tags
 	requirement["source"] = {
 		"type": source_type,
 		"value": source
